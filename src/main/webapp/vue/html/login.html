@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="container">
+
+    <form>
+        用户名：<input type="text" name="username" v-model="username">
+        <br>
+        密码：<input type="password" name="password" v-model="password">
+        <br>
+        <button type="button" v-on:click="send()">登录</button>
+    </form>
+
+
+</div>
+
+
+<script src="/vue/js/vue.min.js"></script>
+<script src="/vue/js/axios.min.js"></script>
+<script>
+    new Vue({
+        el: "#container",
+        data: {
+            username: "",
+            password: ""
+        },
+        methods: {
+            send: function () {
+                var un = this.username;
+                var pw = this.password;
+                //使用axios发送异步请求
+                //post方式时，axios把请求数据处理成了json字符串
+               /* axios.post(
+                    "/user/login.do",
+                    {
+                        username: un,
+                        password: pw
+                    }
+                ).then(function (resp) {
+                    if (resp.data.code == 0) {
+                        location.href = "/vue/html/list.html"
+                    } else {
+                        alert("登录失败")
+                    }
+                }).catch(function (error) {
+                    alert(error)
+                })
+*/
+                axios.get(
+                    "/user/login.do",
+                    {
+                        params:{
+                            username:un,
+                            password:pw
+                        }
+                    }
+                ).then(function (resp) {
+                    if (resp.data.code==0){
+                        location.href = "/vue/html/list.html"
+                    }else{
+                        alert("登录失败")
+                    }
+                }).catch(function (error) {
+                    alert(error)
+                })
+            }
+        }
+    });
+</script>
+</body>
+</html>

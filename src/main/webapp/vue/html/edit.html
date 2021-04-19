@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="container">
+
+    <form>
+        ID:<input type="text" name="id"  v-model="id" readonly="readonly">
+        <br>
+        用户名：<input type="text" name="username"  v-model="username" readonly="readonly">
+        <br>
+        密码：<input type="password" name="password" v-model="password">
+        <br>
+        性别：<input type="radio" name="sex" value="0" v-model="sex">男
+        <input type="radio" name="sex" value="1" v-model="sex">女
+        <br>
+        <button type="button" @click="modify()">保存</button>
+
+    </form>
+
+</div>
+
+<script src="/vue/js/vue.min.js"></script>
+<script src="/vue/js/axios.min.js"></script>
+<script>
+    var id = location.search;
+    new Vue({
+        el:"#container",
+        data:{
+            id:0,
+            username:"",
+            password:"",
+            sex:0
+        },
+        methods:{
+            modify:function () {
+                
+            }
+        },
+        created:function () {
+            var vm = this;
+            axios.get(
+                "/user/info.do"+id
+            ).then(function (resp) {
+                if (resp.data.code == 0) {
+                    var user = resp.data.data;
+                    vm.id = user.id;
+                    vm.username = user.username;
+                    vm.password = user.password;
+                    vm.sex = user.sex;
+
+                } else {
+                    alert("请求失败")
+                }
+            }).catch(function (error) {
+                alert(error)
+            })
+        }
+    });
+
+
+</script>
+
+
+</body>
+</html>

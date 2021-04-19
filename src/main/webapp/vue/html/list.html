@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="container">
+
+    <table border="1px" width="200px">
+        <tr v-for="user in list">
+            <td>{{user.id}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.sex}}</td>
+            <td><a v-bind:href="'/vue/html/edit.html?id='+user.id">更新</a>|<a v-on:click.prevent="del(user.id)" href="#">删除</a></td>
+        </tr>
+    </table>
+    <div>
+        <a href="#" v-on:click.prevent="pageHandler(pageNum)" v-for="pageNum in pages">[{{pageNum}}]</a>
+    </div>
+
+</div>
+
+
+<script src="/vue/js/vue.min.js"></script>
+<script src="/vue/js/axios.min.js"></script>
+<script>
+    new Vue({
+        el: "#container",
+        data: {
+            list: [],
+            pages: 0,
+            pageSize: 5
+        },
+        methods: {
+
+            del: function (id) {
+                //删除
+                axios.get(
+                    "/user/remove.do",
+                    {
+                        params: {
+                            id: id
+                        }
+                    }
+                ).then(function (resp) {
+                    if (resp.data.code == 0) {
+                        //删除成功
+                        alert("删除成功")
+                        setTimeout(function () {
+                            //刷新页面
+                            location.reload();
+                        },1000)
+
+                    } else {
+                        alert("删除失败")
+                    }
+                }).catch(function (error) {
+                    alert(error)
+                })
+            },
+            pageHandler: function (pagenum) {
+                //分页
+                var vm = this;
+                axios.get(
+                    "/user/list.do",
+                    {
+                        params: {
+                            pageNum: pagenum,
+                            pageSize: this.pageSize
+                        }
+                    }
+                ).then(function (resp) {
+                    vm.pages = resp.data.pageInfo.pages;
+                    if (resp.data.code == 0) {
+                        var list = resp.data.data;
+                        vm.list = list;
+                    } else {
+                        alert("请求失败")
+                    }
+                }).catch(function (error) {
+                    alert(error)
+                })
+            }
+        },
+        created: function () {
+            this.pageHandler(1);
+        }
+    });
+</script>
+</body>
+</html>
